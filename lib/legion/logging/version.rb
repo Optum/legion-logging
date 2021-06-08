@@ -1,5 +1,5 @@
 module Legion
   module Logging
-    VERSION = '1.1.5'.freeze
+    VERSION = '1.2.0'.freeze
   end
 end
