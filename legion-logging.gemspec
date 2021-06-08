@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/Optum/legion-logging'
   spec.license       = 'Apache-2.0'
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.4'
+  spec.required_ruby_version = '>= 2.5'
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.test_files        = spec.files.select { |p| p =~ %r{^test/.*_test.rb} }
   spec.extra_rdoc_files  = %w[README.md LICENSE CHANGELOG.md]
