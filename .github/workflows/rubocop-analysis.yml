@@ -1,41 +1,28 @@
-name: "Rubocop"
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: '41 13 * * 4'
-
+name: Rubocop
+on: [push, pull_request]
 jobs:
   rubocop:
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-
+      matrix:
+        os: [ubuntu-latest]
+        ruby: [2.7]
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.6
-
-    - name: Install Code Scanning integration
-      run: bundle add code-scanning-rubocop --version 0.3.0 --skip-install
-
-    - name: Install dependencies
-      run: bundle install
-
-    - name: Rubocop run
-      run: |
-        bash -c "
-          bundle exec rubocop --require code_scanning --format CodeScanning::SarifFormatter -o rubocop.sarif
-          [[ $? -ne 2 ]]
-        "
-
-    - name: Upload Sarif output
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: rubocop.sarif
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Install Rubocop
+        run: gem install rubocop code-scanning-rubocop
+      - name: Rubocop run --no-doc
+        run: |
+          bash -c "
+            rubocop --require code_scanning --format CodeScanning::SarifFormatter -o rubocop.sarif
+            [[ $? -ne 2 ]]
+          "
+      - name: Upload Sarif output
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: rubocop.sarif
